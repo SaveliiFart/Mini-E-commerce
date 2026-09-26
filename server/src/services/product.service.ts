@@ -52,3 +52,67 @@ export const createProduct = async (
         throw new Error("Не удалось создать товар");
     }
 };
+
+export const updateProduct = async (
+    id: number,
+    name: string,
+    description: string | null,
+    price: number,
+    image_url: string | null,
+    stock: number,
+): Promise<Product | null> => {
+    try{
+        const result = await pool.query<ProductRow>(
+            `
+                UPDATE products SET name = $1, description = $2, price = $3, image_url = $4, stock = $5, updated_at = NOW() WHERE id = $6 RETURNING *
+            `,
+            [name, description, price, image_url, stock, id]
+        )
+
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        return mapRow(result.rows[0]);
+    } catch(error) {
+        console.error("updateProduct failed:", error);
+        throw new Error("Не удалось обновить товар");
+    }
+}
+
+export const deleteProduct = async (
+    id: number,
+): Promise<Product | null> => {
+    try{
+        const result = await pool.query<ProductRow>(
+            `UPDATE products SET is_active = false WHERE id = $1 RETURNING *`,
+            [id]
+        )
+
+        if (result.rows.length === 0) {
+            return null; 
+        }
+
+        return mapRow(result.rows[0]);
+    } catch (error) {
+        console.error("deleteProduct failed:", error);
+        throw new Error("Не удалось удалить товар");
+    }
+}
+
+export const getProduct = async (
+    id:number
+): Promise<Product | null> => {
+    try {
+        const result = await pool.query<ProductRow>("SELECT * FROM products WHERE id = $1",[id]);
+
+        if (result.rows.length === 0) {
+            return null;
+        }
+
+        return mapRow(result.rows[0]);
+    } catch (error) {
+        console.error("getProduct failed:", error);
+        throw new Error("Не удалось получить информацию о товаре");
+    }
+};
