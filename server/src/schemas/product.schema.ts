@@ -6,6 +6,7 @@ export const createProductSchema = z.object({
     price: z.number().positive("Цена должна быть больше 0"),
     image_url: z.string().url("Некорректный URL картинки").nullable(),
     stock: z.number().int().nonnegative("Остаток не может быть отрицательным"),
+    category_id: z.number().int().nullable(),
 });
 
 export const updateProductSchema = createProductSchema;

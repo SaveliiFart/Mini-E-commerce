@@ -8,4 +8,5 @@ export interface Product {
     is_active: boolean;
     created_at: Date;
     updated_at: Date;
+    category_id: number | null
 }

@@ -36,14 +36,15 @@ export const createProduct = async (
     description: string | null,
     price: number,
     image_url: string | null,
-    stock: number
+    stock: number,
+    category_id: number | null
 ): Promise<Product> => {
     try {
         const result = await pool.query<ProductRow>(
-            `INSERT INTO products (name, description, price, image_url, stock)
-            VALUES ($1, $2, $3, $4, $5)
+            `INSERT INTO products (name, description, price, image_url, stock, category_id)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *`,
-            [name, description, price, image_url, stock]
+            [name, description, price, image_url, stock, category_id]
         );
 
         return mapRow(result.rows[0]);
@@ -60,13 +61,14 @@ export const updateProduct = async (
     price: number,
     image_url: string | null,
     stock: number,
+    category_id: number | null
 ): Promise<Product | null> => {
     try{
         const result = await pool.query<ProductRow>(
             `
-                UPDATE products SET name = $1, description = $2, price = $3, image_url = $4, stock = $5, updated_at = NOW() WHERE id = $6 RETURNING *
+                UPDATE products SET name = $1, description = $2, price = $3, image_url = $4, stock = $5,category_id = $6, updated_at = NOW() WHERE id = $7 RETURNING *
             `,
-            [name, description, price, image_url, stock, id]
+            [name, description, price, image_url, stock,category_id, id]
         )
 
         if (result.rows.length === 0) {

@@ -24,14 +24,15 @@ export const getActiveProducts = async (req: Request,res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
     try {
-        const { name, description, price, image_url, stock } = req.body;
+        const { name, description, price, image_url, stock, category_id } = req.body;
 
         const createdProduct = await productService.createProduct(
             name,
             description,
             price,
             image_url,
-            stock
+            stock,
+            category_id
         );
 
         res.status(201).json(createdProduct);
@@ -44,10 +45,10 @@ export const createProduct = async (req: Request, res: Response) => {
 export const updateProduct = async(req: Request, res: Response) => {
     try{
         const id = Number(req.params.id)
-        const {name, description, price, image_url, stock } = req.body;
+        const {name, description, price, image_url, stock, category_id } = req.body;
 
         const updatedProduct = await productService.updateProduct(
-            id, name, description, price, image_url, stock
+            id, name, description, price, image_url, stock, category_id
         )
 
         if (!updatedProduct) {
