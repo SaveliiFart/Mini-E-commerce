@@ -16,7 +16,7 @@ export interface Order {
 export interface OrderItem {
     id: number;
     order_id: number;
-    product_id: number;
+    variant_id: number;
     quantity: number;
     price: number;
 }

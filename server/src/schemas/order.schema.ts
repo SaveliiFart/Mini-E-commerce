@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createOrderItemSchema = z.object({
-    product_id: z.number().int().positive(),
+    variant_id: z.number().int().positive(),
     quantity: z.number().int().positive(),
 });
 

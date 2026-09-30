@@ -2,8 +2,6 @@ import { pool } from "../config/db.js";
 import type { Order, OrderItem,OrderWithItems, OrderStatus } from "../types/order.types.js";
 import type { CreateOrderInput } from "../schemas/order.schema.js";
 
-const client = await pool.connect()
-
 type OrderRow = Omit<Order, "total_price"> & {total_price: string};
 type OrderItemRow = Omit<OrderItem, "price"> & {price: string};
 
@@ -20,31 +18,32 @@ const mapOrderItemRow = (row: OrderItemRow): OrderItem => ({
 export class OrderValidationError extends Error {}
 
 export const createOrder = async(input: CreateOrderInput): Promise<OrderWithItems> => {
+    const client = await pool.connect()
     try {
         await client.query("BEGIN");
 
         let totalPrice = 0
-        const itemsWithPrice: { product_id: number; quantity: number; price: number }[] = [];
+        const itemsWithPrice: { variant_id: number; quantity: number; price: number }[] = [];
 
         for(const item of input.items) {
             const productResult = await client.query<{ price: string; stock: number }>(
-                `SELECT price, stock FROM products WHERE id = $1 AND is_active = true FOR UPDATE`,
-                [item.product_id]
+                `SELECT price, stock FROM product_variants WHERE id = $1 AND is_active = true FOR UPDATE`,
+                [item.variant_id]
             );
 
             if (productResult.rows.length === 0) {
-                throw new OrderValidationError(`Товар с id ${item.product_id} не найден или недоступен`);
+                throw new OrderValidationError(`Товар с id ${item.variant_id} не найден или недоступен`);
             }
 
             const product = productResult.rows[0]
             const price = Number(product.price)
 
             if(product.stock < item.quantity) {
-                throw new OrderValidationError(`Недостаточно товара id ${item.product_id} на складе (доступно: ${product.stock})`)
+                throw new OrderValidationError(`Недостаточно товара id ${item.variant_id} на складе (доступно: ${product.stock})`)
             }
 
             totalPrice += price * item.quantity
-            itemsWithPrice.push({product_id: item.product_id, quantity: item.quantity, price: price})
+            itemsWithPrice.push({variant_id: item.variant_id, quantity: item.quantity, price: price})
         }
 
         const orderResult = await client.query<OrderRow>(`
@@ -58,14 +57,14 @@ export const createOrder = async(input: CreateOrderInput): Promise<OrderWithItem
 
         for(const item of itemsWithPrice) {
             const itemsResult = await client.query<OrderItemRow>(`
-                INSERT INTO order_items (order_id, product_id, quantity, price)
+                INSERT INTO order_items (order_id, variant_id, quantity, price)
                 VALUES ($1, $2, $3, $4)
                 RETURNING *
-            `, [order.id, item.product_id, item.quantity, item.price]);
+            `, [order.id, item.variant_id, item.quantity, item.price]);
             createdItems.push(itemsResult.rows[0])
             await client.query(
-                `UPDATE products SET stock = stock - $1 WHERE id = $2`,
-                [item.quantity, item.product_id]
+                `UPDATE product_variants SET stock = stock - $1 WHERE id = $2`,
+                [item.quantity, item.variant_id]
             );
         }
 
@@ -84,6 +83,7 @@ export const createOrder = async(input: CreateOrderInput): Promise<OrderWithItem
 }
 
 export const getOrders = async(): Promise<OrderRow> => {
+    const client = await pool.connect()
     try{
         const result = await client.query<OrderRow>(`SELECT * FROM orders ORDER BY created_at DESC`)
         return result.rows[0]
@@ -94,6 +94,7 @@ export const getOrders = async(): Promise<OrderRow> => {
 }
 
 export const getOrder = async(id: number): Promise<OrderWithItems | null> => {
+    const client = await pool.connect()
     try{
         const orderResult = await client.query<OrderRow>(`SELECT * FROM orders WHERE id = $1`,[id])
 
