@@ -25,3 +25,11 @@ export interface OrderWithItems {
     order: Order;
     items: OrderItem[];
 }
+
+export interface OrderItemDetailed {
+    product_name: string;
+    size: string;
+    color: string;
+    quantity: number;
+    price: number;
+}

@@ -1,9 +1,10 @@
 import { pool } from "../config/db.js";
-import type { Order, OrderItem,OrderWithItems, OrderStatus } from "../types/order.types.js";
+import type { Order, OrderItem,OrderWithItems, OrderStatus, OrderItemDetailed } from "../types/order.types.js";
 import type { CreateOrderInput } from "../schemas/order.schema.js";
 
 type OrderRow = Omit<Order, "total_price"> & {total_price: string};
 type OrderItemRow = Omit<OrderItem, "price"> & {price: string};
+type OrderItemDetailedRow = Omit<OrderItemDetailed, "price"> & { price: string };
 
 const mapOrderRow = (row: OrderRow): Order => ({
     ...row,
@@ -14,6 +15,25 @@ const mapOrderItemRow = (row: OrderItemRow): OrderItem => ({
     ...row,
     price: Number(row.price),
 });
+
+export const getOrderItemsDetailed = async (order_id: number): Promise<OrderItemDetailed[]> => {
+    try {
+        const result = await pool.query<OrderItemDetailedRow>(
+            `   
+                SELECT oi.quantity, oi.price, pv.size, pv.color, p.name AS product_name
+                FROM order_items oi
+                JOIN product_variants pv ON oi.variant_id = pv.id
+                JOIN products p ON pv.product_id = p.id
+                WHERE oi.order_id = $1`,
+            [order_id]
+        );
+
+        return result.rows.map((row) => ({ ...row, price: Number(row.price) }));
+    } catch (error) {
+        console.error("getOrderItemsDetailed failed:", error);
+        throw new Error("Не удалось получить состав заказа");
+    }
+};
 
 export class OrderValidationError extends Error {}
 
@@ -82,11 +102,11 @@ export const createOrder = async(input: CreateOrderInput): Promise<OrderWithItem
     }
 }
 
-export const getOrders = async(): Promise<OrderRow> => {
+export const getOrders = async(): Promise<OrderRow[]> => {
     const client = await pool.connect()
     try{
         const result = await client.query<OrderRow>(`SELECT * FROM orders ORDER BY created_at DESC`)
-        return result.rows[0]
+        return result.rows
     } catch(error) {
         console.error("getOrders failed:", error);
         throw new Error("Не удалось получить список заказов");

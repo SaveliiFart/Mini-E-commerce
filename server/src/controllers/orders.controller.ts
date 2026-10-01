@@ -1,10 +1,14 @@
 import type { Request, Response } from "express";
 import * as orderService from "../services/orders.service.js";
+import { notifyAdminsNewOrder } from "../bot/notifications.js";
 
 export const createOrder = async (req: Request, res: Response) => {
     try {
         const created = await orderService.createOrder(req.body);
         res.status(201).json(created);
+        notifyAdminsNewOrder(created).catch((error) => {
+            console.error("notifyAdminsNewOrder failed:", error);
+        });
     } catch (error) {
         console.error("createOrder controller failed:", error);
         if (error instanceof orderService.OrderValidationError) {

@@ -1,3 +1,5 @@
+import "./config/env.js";  
+import { startBot } from "./bot/bot.js";
 import express from "express";
 import productRouter from "./routes/product.routes.js"
 import categoryRouter from "./routes/categories.routes.js"
@@ -17,3 +19,5 @@ app.use("/api/variants", variantRouter);
 app.listen(5459, () => {
     console.log("Server running on http://localhost:5459");
 });
+
+startBot();

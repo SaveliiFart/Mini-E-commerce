@@ -11,6 +11,16 @@ export const getUsers = async(): Promise<User[]> => {
     }
 }
 
+export const getAdmins = async (): Promise<User[]> => {
+    try {
+        const result = await pool.query<User>(`SELECT * FROM users WHERE role = 'admin'`);
+        return result.rows;
+    } catch (error) {
+        console.error("getAdmins failed:", error);
+        throw new Error("Не удалось получить список админов");
+    }
+};
+
 export const getUser = async(id: number): Promise<User | null> => {
     try{
         const result = await pool.query<User>(`SELECT * FROM users WHERE id = $1`, [id])
