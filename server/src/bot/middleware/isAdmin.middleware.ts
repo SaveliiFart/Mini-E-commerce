@@ -1,10 +1,10 @@
 import type { NextFunction } from "grammy";
-import type { BotContext } from "../bot.js";
+import type { MyContext } from "../bot.js";
 import * as userService from "../../services/users.service.js";
 
-export const isAdmin = async (ctx: BotContext, next: NextFunction) => {
+export const isAdmin = async (ctx: MyContext, next: NextFunction) => {
     if (!ctx.from) {
-        return; 
+        return;
     }
 
     const telegram_id = String(ctx.from.id);

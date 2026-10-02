@@ -24,10 +24,11 @@ export const getActiveProducts = async (req: Request,res: Response) => {
 
 export const createProduct = async (req: Request, res: Response) => {
     try {
-        const { name, description, image_url, category_id } = req.body;
+        const { model, brand, description, image_url, category_id } = req.body;
 
         const createdProduct = await productService.createProduct(
-            name,
+            model,
+            brand,
             description,
             image_url,
             category_id
@@ -43,10 +44,10 @@ export const createProduct = async (req: Request, res: Response) => {
 export const updateProduct = async(req: Request, res: Response) => {
     try{
         const id = Number(req.params.id)
-        const {name, description, image_url, category_id } = req.body;
+        const {model,brand, description, image_url, category_id } = req.body;
 
         const updatedProduct = await productService.updateProduct(
-            id, name, description, image_url, category_id
+            id, model,brand, description, image_url, category_id
         )
 
         if (!updatedProduct) {

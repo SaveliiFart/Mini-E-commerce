@@ -1,5 +1,5 @@
 import { InlineKeyboard } from "grammy";
-import type { BotContext } from "../bot.js";
+import type { MyContext } from "../bot.js";
 import * as ordersService from "../../services/orders.service.js";
 import type { OrderStatus } from "../../types/order.types.js";
 
@@ -35,7 +35,7 @@ const statusKeyboard = (orderId: number) => (
         .text("❌ Отменить", `status:${orderId}:cancelled`)
 );
 
-export const getOrders = async (ctx: BotContext) => {
+export const getOrders = async (ctx: MyContext) => {
     const orderList = await ordersService.getOrders();
 
     if (orderList.length === 0) {
@@ -53,7 +53,7 @@ const VALID_STATUSES: OrderStatus[] = [
     "pending", "confirmed", "processing", "shipped", "delivered", "cancelled",
 ];
 
-export const handleStatusUpdate = async (ctx: BotContext) => {
+export const handleStatusUpdate = async (ctx: MyContext) => {
     const match = ctx.match as RegExpMatchArray;
     const orderId = Number(match[1]);
     const status = match[2];

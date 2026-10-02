@@ -1,10 +1,19 @@
 import { Bot, Context } from "grammy";
+import {
+    type Conversation,
+    type ConversationFlavor,
+    conversations,
+    createConversation,
+} from "@grammyjs/conversations";
 import type { User } from "../types/user.types.js";
 import { isAdmin } from "./middleware/isAdmin.middleware.js";
+import { createCategory } from "./handlers/createCategory.js";
+import { createProduct } from "./handlers/createProduct.js";
 
 export interface BotContext extends Context {
     admin?: User;
 }
+export type MyContext = ConversationFlavor<BotContext>;
 
 const token = process.env.BOT_TOKEN;
 
@@ -12,11 +21,16 @@ if (!token) {
     throw new Error("BOT_TOKEN не задан в .env");
 }
 
-export const bot = new Bot<BotContext>(token);
+export const bot = new Bot<MyContext>(token);
 
 bot.use(isAdmin);
+bot.use(conversations());
+bot.use(createConversation(createCategory));
+bot.use(createConversation(createProduct));
 
 import { getOrders, handleStatusUpdate } from "./handlers/orders.bot.js";
+import {getCategory,handleCategorySelect,handleBrandSelect,handleModelSelect,} from "./handlers/inventory.bot.js";
+
 
 bot.command("start", async (ctx) => {
     await ctx.reply(
@@ -28,8 +42,18 @@ bot.command("start", async (ctx) => {
 });
 
 bot.command("orders", getOrders);
+bot.command("products", getCategory)
+bot.command("createCategory", async (ctx) => {
+    await ctx.conversation.enter("createCategory");
+});
+bot.command("createProduct", async (ctx) => {
+    await ctx.conversation.enter("createProduct");
+});
 
 bot.callbackQuery(/^status:(\d+):(\w+)$/, handleStatusUpdate);
+bot.callbackQuery(/^category:(\d+)$/, handleCategorySelect);
+bot.callbackQuery(/^brand:(\d+):(.+)$/, handleBrandSelect);
+bot.callbackQuery(/^model:(\d+):([^:]+):(.+)$/, handleModelSelect);
 
 bot.catch((err) => {
     console.error("Bot error:", err);
