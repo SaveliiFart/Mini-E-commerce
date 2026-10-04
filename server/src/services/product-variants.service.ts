@@ -10,7 +10,7 @@ const mapRow = (row: VariantRow): ProductVariant => ({
 
 export const getVariants = async(product_id:number): Promise<ProductVariant[]> => {
     try{
-        const result = await pool.query<VariantRow>(`SELECT * FROM product_variants WHERE product_id = $1`, [product_id])
+        const result = await pool.query<VariantRow>(`SELECT * FROM product_variants WHERE product_id = $1 AND is_active = true`, [product_id])
         return result.rows.map(mapRow)
     } catch(error) {
         console.error("getVariants failed:", error);

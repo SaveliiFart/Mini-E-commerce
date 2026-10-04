@@ -100,7 +100,6 @@ export const createProduct = async (conversation: MyConversation, ctx: MyContext
     );
 
     await ctx.reply(
-        `✅ Товар создан!\n${brand} ${model}, вариант: ${color} / ${size}\n` +
-        `Товар #${created.product_id}, вариант #${created.variant_id}`
+        `✅ Товар создан!\n${brand} ${model}, вариант: ${color} / ${size}\n` 
     );
 };

@@ -84,5 +84,56 @@ export const handleModelSelect = async (ctx: MyContext) => {
         .map((v) => `  • ${v.color}, размер ${v.size}: ${v.stock} шт. (${v.price} ₽)`)
         .join("\n");
 
-    await ctx.editMessageText(`${brand} ${model}\n\n${variantsText}`);
+    const keyboard = new InlineKeyboard();
+    for (const v of variants) {
+        keyboard
+            .text(`✏️ ${v.color}/${v.size}`, `edit-variant:${v.id}`)
+            .text("🗑", `delete-variant:${v.id}`)
+            .row();
+    }
+
+    await ctx.editMessageText(`${brand} ${model}\n\n${variantsText}`, {reply_markup: keyboard});
+};
+
+export const handleDeleteVariant = async (ctx: MyContext) => {
+    const match = ctx.match as RegExpMatchArray;
+    const variantId = Number(match[1]);
+
+    const variant = await variantService.getVariant(variantId);
+
+    if (!variant) {
+        await ctx.answerCallbackQuery({ text: "Вариант не найден", show_alert: true });
+        return;
+    }
+
+    await ctx.answerCallbackQuery();
+
+    const confirmKeyboard = new InlineKeyboard()
+        .text("✅ Да, удалить", `confirm-delete-variant:${variantId}`)
+        .text("❌ Отмена", `cancel-delete-variant:${variantId}`);
+
+    await ctx.editMessageText(
+        `Удалить вариант ${variant.color} / ${variant.size} (остаток ${variant.stock} шт.)?`,
+        { reply_markup: confirmKeyboard }
+    );
+};
+
+export const handleConfirmDeleteVariant = async (ctx: MyContext) => {
+    const match = ctx.match as RegExpMatchArray;
+    const variantId = Number(match[1]);
+
+    const deleted = await variantService.deleteVariant(variantId);
+
+    if (!deleted) {
+        await ctx.answerCallbackQuery({ text: "Вариант не найден", show_alert: true });
+        return;
+    }
+
+    await ctx.answerCallbackQuery("Вариант удалён");
+    await ctx.editMessageText(`🗑 Вариант удалён: ${deleted.color} / ${deleted.size}`);
+};
+
+export const handleCancelDeleteVariant = async (ctx: MyContext) => {
+    await ctx.answerCallbackQuery("Отменено");
+    await ctx.editMessageText("Удаление отменено. Чтобы вернуться к списку — набери /products ещё раз.");
 };

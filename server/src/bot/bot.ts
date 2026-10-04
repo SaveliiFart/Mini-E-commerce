@@ -9,6 +9,8 @@ import type { User } from "../types/user.types.js";
 import { isAdmin } from "./middleware/isAdmin.middleware.js";
 import { createCategory } from "./handlers/createCategory.js";
 import { createProduct } from "./handlers/createProduct.js";
+import { createVariant } from "./handlers/createVariant.js";
+import { editVariant } from "./handlers/editVariant.js";
 
 export interface BotContext extends Context {
     admin?: User;
@@ -27,9 +29,11 @@ bot.use(isAdmin);
 bot.use(conversations());
 bot.use(createConversation(createCategory));
 bot.use(createConversation(createProduct));
+bot.use(createConversation(createVariant));
+bot.use(createConversation(editVariant));
 
 import { getOrders, handleStatusUpdate } from "./handlers/orders.bot.js";
-import {getCategory,handleCategorySelect,handleBrandSelect,handleModelSelect,} from "./handlers/inventory.bot.js";
+import {getCategory,handleCategorySelect,handleBrandSelect,handleModelSelect, handleDeleteVariant, handleConfirmDeleteVariant, handleCancelDeleteVariant,} from "./handlers/inventory.bot.js";
 
 
 bot.command("start", async (ctx) => {
@@ -49,11 +53,28 @@ bot.command("createCategory", async (ctx) => {
 bot.command("createProduct", async (ctx) => {
     await ctx.conversation.enter("createProduct");
 });
+bot.command("createVariant", async (ctx) => {
+    await ctx.conversation.enter("createVariant");
+});
+
+bot.command("cancel", async (ctx) => {
+    await ctx.conversation.exitAll();
+    await ctx.reply("Диалог отменён.");
+});
 
 bot.callbackQuery(/^status:(\d+):(\w+)$/, handleStatusUpdate);
 bot.callbackQuery(/^category:(\d+)$/, handleCategorySelect);
 bot.callbackQuery(/^brand:(\d+):(.+)$/, handleBrandSelect);
 bot.callbackQuery(/^model:(\d+):([^:]+):(.+)$/, handleModelSelect);
+bot.callbackQuery(/^delete-variant:(\d+)$/, handleDeleteVariant);
+bot.callbackQuery(/^confirm-delete-variant:(\d+)$/, handleConfirmDeleteVariant);
+bot.callbackQuery(/^cancel-delete-variant:(\d+)$/, handleCancelDeleteVariant);
+
+bot.callbackQuery(/^edit-variant:(\d+)$/, async (ctx) => {
+    const variantId = Number(ctx.match[1]);
+    await ctx.answerCallbackQuery();
+    await ctx.conversation.enter("editVariant", variantId);
+});
 
 bot.catch((err) => {
     console.error("Bot error:", err);
