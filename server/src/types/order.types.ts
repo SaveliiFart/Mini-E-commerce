@@ -27,7 +27,8 @@ export interface OrderWithItems {
 }
 
 export interface OrderItemDetailed {
-    product_name: string;
+    brand: string;
+    model: string;
     size: string;
     color: string;
     quantity: number;

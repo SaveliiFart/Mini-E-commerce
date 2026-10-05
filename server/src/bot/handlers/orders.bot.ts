@@ -10,7 +10,7 @@ const formatOrderText = async (orderId: number): Promise<string> => {
     const items = await ordersService.getOrderItemsDetailed(orderId);
     const itemsText = items
         .map((item) => (
-            `  • ${item.product_name} (${item.size}, ${item.color}) × ${item.quantity} = ${item.price * item.quantity} ₽`
+            `  • ${item.brand} ${item.model} (${item.size}, ${item.color}) × ${item.quantity} = ${item.price * item.quantity} ₽`
         ))
         .join("\n");
 

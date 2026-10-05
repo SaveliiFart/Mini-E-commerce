@@ -20,7 +20,7 @@ export const getOrderItemsDetailed = async (order_id: number): Promise<OrderItem
     try {
         const result = await pool.query<OrderItemDetailedRow>(
             `   
-                SELECT oi.quantity, oi.price, pv.size, pv.color, p.name AS product_name
+                SELECT oi.quantity, oi.price, pv.size, pv.color, p.brand, p.model
                 FROM order_items oi
                 JOIN product_variants pv ON oi.variant_id = pv.id
                 JOIN products p ON pv.product_id = p.id
@@ -155,14 +155,14 @@ export const updateOrderStatus = async (
         const currentOrder = currentResult.rows[0];
 
         if (status === "cancelled" && currentOrder.status !== "cancelled") {
-            const itemsResult = await client.query<{ product_id: number; quantity: number }>(
-                `SELECT product_id, quantity FROM order_items WHERE order_id = $1`,
+            const itemsResult = await client.query<{ variant_id: number; quantity: number }>(
+                `SELECT variant_id, quantity FROM order_items WHERE order_id = $1`,
                 [id]
             );
             for (const item of itemsResult.rows) {
                 await client.query(
-                    `UPDATE products SET stock = stock + $1 WHERE id = $2`,
-                    [item.quantity, item.product_id]
+                    `UPDATE product_variants SET stock = stock + $1 WHERE id = $2`,
+                    [item.quantity, item.variant_id]
                 );
             }
         }
