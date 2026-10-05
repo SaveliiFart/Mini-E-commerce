@@ -13,13 +13,13 @@ export const getBrandsByCategory = async (category_id: number): Promise<string[]
     }
 };
 
-export const getModelsByBrand = async (category_id: number, brand: string): Promise<string[]> => {
+export const getModelsByBrand = async (category_id: number, brand: string): Promise<{id:number, model: string}[]> => {
     try {
-        const result = await pool.query<{ model: string }>(
-            `SELECT DISTINCT model FROM products WHERE category_id = $1 AND brand = $2 ORDER BY model`,
+        const result = await pool.query<{ id: number,model: string }>(
+            `SELECT DISTINCT id,model FROM products WHERE category_id = $1 AND brand = $2 ORDER BY model`,
             [category_id, brand]
         );
-        return result.rows.map((row) => row.model);
+        return result.rows
     } catch (error) {
         console.error("getModelsByBrand failed:", error);
         throw new Error("Не удалось получить список моделей");
@@ -58,7 +58,7 @@ export const createVariantByBrandModel = async(input: CreateVariantInput) => {
     try{
         await client.query("BEGIN");
 
-        const products = await client.query(` SELECT * FROM products WHERE category_id = $1 AND brand = $2 AND model = $3`, [input.category_id,input.brand,input.model])
+        const products = await client.query(` SELECT id FROM products WHERE category_id = $1 AND brand = $2 AND model = $3`, [input.category_id,input.brand,input.model])
 
         if (products.rows.length === 0) {
             throw new Error(`Товар ${input.brand} ${input.model} не найден`);

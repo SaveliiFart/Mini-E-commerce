@@ -95,8 +95,8 @@ export const createVariant = async(conversation: MyConversation, ctx: MyContext)
     }
 
     const modelsKeyboard = new InlineKeyboard()
-    for(const model of models){
-        modelsKeyboard.text(model, `model:${category_id}:${encodeURIComponent(brand)}:${encodeURIComponent(model)}`).row();
+    for(const opt of models){
+        modelsKeyboard.text(opt.model, `model:${category_id}:${encodeURIComponent(brand)}:${encodeURIComponent(opt.model)}`).row();
     }
 
     await ctx.reply("Выберите модель:", { reply_markup: modelsKeyboard });

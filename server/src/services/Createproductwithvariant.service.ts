@@ -27,14 +27,21 @@ export const createProductWithVariant = async (
     try {
         await client.query("BEGIN");
 
-        const productResult = await client.query<{ id: number }>(`
-            INSERT INTO products (category_id, brand, model, description, image_url)
-            VALUES ($1, $2, $3, $4, $5)
-            RETURNING id`,
-            [input.category_id, input.brand, input.model, input.description, input.image_url]
-        );
 
-        const productId = productResult.rows[0].id;
+        const existingProduct = await client.query<{ id: number }>(
+            `SELECT id FROM products WHERE brand = $1 AND model = $2 LIMIT 1`,[input.brand, input.model]);
+
+        let productId: number;
+
+        if (existingProduct.rows.length > 0) {
+            productId = existingProduct.rows[0].id;
+        } else {
+            const productResult = await client.query<{ id: number }>(`INSERT INTO products (category_id,brand,model,description,image_url) VALUES ($1, $2, $3, $4, $5) RETURNING id`,
+                [input.category_id,input.brand,input.model,input.description,input.image_url,]
+            );
+
+            productId = productResult.rows[0].id;
+        }
 
         const variantResult = await client.query<{ id: number }>(
 `INSERT INTO product_variants (product_id, size, color, sku, price, stock)

@@ -6,7 +6,6 @@ import { createProductWithVariant } from "../../services/Createproductwithvarian
 
 type MyConversation = Conversation<MyContext, MyContext>;
 
-// Текст, который обязателен — повторяет вопрос, пока не придёт непустой ответ
 const waitForRequiredText = async (
     conversation: MyConversation,
     ctx: MyContext,
@@ -25,7 +24,6 @@ const waitForRequiredText = async (
     }
 };
 
-// Текст, который можно пропустить, прислав "-"
 const waitForOptionalText = async (
     conversation: MyConversation,
     ctx: MyContext,
@@ -38,7 +36,6 @@ const waitForOptionalText = async (
     return text === "-" ? null : text;
 };
 
-// Число с проверкой — повторяет вопрос, пока не придёт валидное значение
 const waitForNumber = async (
     conversation: MyConversation,
     ctx: MyContext,
