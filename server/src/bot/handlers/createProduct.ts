@@ -1,8 +1,8 @@
 import { InlineKeyboard } from "grammy";
 import type { Conversation } from "@grammyjs/conversations";
 import type { MyContext } from "../bot.js";
-import * as categoryService from "../../services/categories.service.js";
-import { createProductWithVariant } from "../../services/Createproductwithvariant.service.js";
+import * as categoryService from "../../services/category.service.js";
+import { createProductWithVariant } from "../../services/product-with-variant.service.js";
 
 type MyConversation = Conversation<MyContext, MyContext>;
 

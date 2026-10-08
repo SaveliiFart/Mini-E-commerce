@@ -1,6 +1,6 @@
 import type { Conversation } from "@grammyjs/conversations";
 import type { MyContext } from "../bot.js";
-import * as variantService from "../../services/product-variants.service.js";
+import * as variantService from "../../services/product-variant.service.js";
 
 type MyConversation = Conversation<MyContext, MyContext>;
 

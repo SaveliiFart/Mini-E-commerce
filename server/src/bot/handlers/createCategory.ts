@@ -1,6 +1,6 @@
 import type { Conversation } from "@grammyjs/conversations";
 import type { MyContext } from "../bot.js";
-import * as categoryService from "../../services/categories.service.js";
+import * as categoryService from "../../services/category.service.js";
 import { InlineKeyboard } from "grammy";
 
 type MyConversation = Conversation<MyContext, MyContext>;

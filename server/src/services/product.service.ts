@@ -1,22 +1,5 @@
 import { pool } from "../config/db.js";
-import type { Product, ProductDetails } from "../types/product.types.js";
-
-export const getProductDetails = async(id: number): Promise<ProductDetails[]> => {
-    try{
-        const result = await pool.query<ProductDetails>(`
-            SELECT c.name AS category_name, p.name AS product_name, p.description, pv.size, pv.color, pv.sku, pv.price, pv.stock, pv.is_active
-            FROM products p
-            JOIN product_variants pv ON p.id = pv.product_id
-            JOIN categories c ON p.category_id = c.id
-            WHERE p.id = $1
-        `, [id])
-
-        return result.rows.map((row) => ({ ...row, price: Number(row.price) }));
-    } catch(error) {
-        console.error("getProductDetails failed:", error);
-        throw new Error("Не удалось получить детали товара");
-    }
-}
+import type { Product } from "../types/product.types.js";
 
 export const getProducts = async (): Promise<Product[]> => {
     try {
@@ -73,7 +56,7 @@ export const updateProduct = async (
     try{
         const result = await pool.query<Product>(
             `
-                UPDATE products SET model = $1, description = $2, image_url = $3,category_id = $4, brand = $5 updated_at = NOW() WHERE id = $6 RETURNING *
+                UPDATE products SET model = $1, description = $2, image_url = $3,category_id = $4, brand = $5, updated_at = NOW() WHERE id = $6 RETURNING *
             `,
             [model, description, image_url,category_id,brand, id]
         )

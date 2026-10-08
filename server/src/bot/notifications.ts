@@ -1,6 +1,6 @@
 import { bot } from "./bot.js";
-import * as userService from "../services/users.service.js";
-import * as ordersService from "../services/orders.service.js";
+import * as userService from "../services/user.service.js";
+import * as ordersService from "../services/order.service.js";
 import type { OrderWithItems } from "../types/order.types.js";
 
 export const notifyAdminsNewOrder = async (data: OrderWithItems) => {
@@ -13,7 +13,7 @@ export const notifyAdminsNewOrder = async (data: OrderWithItems) => {
 
     const items = await ordersService.getOrderItemsDetailed(data.order.id);
     const itemsText = items
-        .map((item) => `  • ${item.product_name} (${item.size}, ${item.color}) × ${item.quantity}`)
+        .map((item) => `  • ${item.brand} ${item.model} (${item.size}, ${item.color}) × ${item.quantity}`)
         .join("\n");
 
     const text = (

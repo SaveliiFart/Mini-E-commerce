@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateBody } from "../middleware/validate.middleware.js";
 import { createOrderSchema, updateOrderStatusSchema } from "../schemas/order.schema.js";
-import { createOrder, getOrder, getOrders, updateOrderStatus } from "../controllers/orders.controller.js";
+import { createOrder, getOrder, getOrders, updateOrderStatus } from "../controllers/order.controller.js";
 
 const router = Router();
 

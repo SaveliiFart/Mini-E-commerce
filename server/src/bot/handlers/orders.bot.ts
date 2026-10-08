@@ -1,6 +1,6 @@
 import { InlineKeyboard } from "grammy";
 import type { MyContext } from "../bot.js";
-import * as ordersService from "../../services/orders.service.js";
+import * as ordersService from "../../services/order.service.js";
 import type { OrderStatus } from "../../types/order.types.js";
 
 const formatOrderText = async (orderId: number): Promise<string> => {

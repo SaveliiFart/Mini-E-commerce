@@ -9,15 +9,3 @@ export interface Product {
     updated_at: Date;
     category_id: number | null
 }
-
-export interface ProductDetails {
-    products_name: string;
-    category_name: string;
-    description: string | null;
-    size: string;
-    color: string,
-    sku: string,
-    price: number,
-    stock: number,
-    is_active: boolean
-}

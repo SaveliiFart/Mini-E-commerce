@@ -1,6 +1,6 @@
 import type { NextFunction } from "grammy";
 import type { MyContext } from "../bot.js";
-import * as userService from "../../services/users.service.js";
+import * as userService from "../../services/user.service.js";
 
 export const isAdmin = async (ctx: MyContext, next: NextFunction) => {
     if (!ctx.from) {

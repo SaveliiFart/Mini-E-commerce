@@ -1,4 +1,4 @@
-import { Bot, Context } from "grammy";
+import { Bot, Context, InlineKeyboard  } from "grammy";
 import {
     type ConversationFlavor,
     conversations,
@@ -20,7 +20,7 @@ import {
 } from "./handlers/orders.bot.js";
 
 import {
-    getCategory,
+    browseCategoriesInteractive,
     handleCategorySelect,
     handleBrandSelect,
     handleModelSelect,
@@ -30,10 +30,8 @@ import {
     handleDeleteProduct,
     handleConfirmDeleteProduct,
     handleCancelDeleteProduct,
-    getCategories,
+    listCategoriesAsText,
 } from "./handlers/inventory.bot.js";
-
-import { InlineKeyboard } from "grammy";
 
 
 // ─────────────────────────────────────────────
@@ -189,7 +187,7 @@ bot.callbackQuery("variant:create", async (ctx) => {
 bot.callbackQuery("product:list", async (ctx) => {
     await ctx.answerCallbackQuery();
 
-    await getCategory(ctx);
+    await browseCategoriesInteractive(ctx);
 });
 
 // ─────────────────────────────────────────────
@@ -220,7 +218,7 @@ bot.callbackQuery("category:create", async (ctx) => {
 bot.callbackQuery("category:list", async (ctx) => {
     await ctx.answerCallbackQuery();
 
-    await getCategories(ctx);
+    await listCategoriesAsText(ctx);
 });
 
 
@@ -242,7 +240,7 @@ bot.callbackQuery("admin:orders", async (ctx) => {
 
 bot.command("orders", getOrders);
 
-bot.command("products", getCategory);
+bot.command("products", browseCategoriesInteractive);
 
 bot.command("createCategory", async (ctx) => {
     await ctx.conversation.enter("createCategory");

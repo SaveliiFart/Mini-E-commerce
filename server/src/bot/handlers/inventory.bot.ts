@@ -3,15 +3,15 @@ import type { MyContext } from "../bot.js";
 
 import * as productInventoryService from "../../services/productInventory.service.js";
 import * as productService from "../../services/product.service.js";
-import * as categoryService from "../../services/categories.service.js";
-import * as variantService from "../../services/product-variants.service.js";
+import * as categoryService from "../../services/category.service.js";
+import * as variantService from "../../services/product-variant.service.js";
 
 
 // ─────────────────────────────────────────────
 // Categories
 // ─────────────────────────────────────────────
 
-export const getCategories = async (ctx: MyContext) => {
+export const listCategoriesAsText = async (ctx: MyContext) => {
     const categoriesList = await categoryService.getCategories();
 
     if (categoriesList.length === 0) {
@@ -34,7 +34,7 @@ export const getCategories = async (ctx: MyContext) => {
 // Category list
 // ─────────────────────────────────────────────
 
-export const getCategory = async (ctx: MyContext) => {
+export const browseCategoriesInteractive = async (ctx: MyContext) => {
     const categoryList = await categoryService.getCategories();
 
     if (categoryList.length === 0) {
@@ -264,7 +264,7 @@ export const handleModelSelect = async (ctx: MyContext) => {
 export const handleBackToProducts = async (ctx: MyContext) => {
     await ctx.answerCallbackQuery();
 
-    await getCategory(ctx);
+    await browseCategoriesInteractive(ctx);
 };
 
 

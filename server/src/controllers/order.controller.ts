@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import * as orderService from "../services/orders.service.js";
+import * as orderService from "../services/order.service.js";
 import { notifyAdminsNewOrder } from "../bot/notifications.js";
 
 export const createOrder = async (req: Request, res: Response) => {

@@ -1,14 +1,16 @@
 import "./config/env.js";  
+import cors from "cors"
 import { startBot } from "./bot/bot.js";
 import express from "express";
 import productRouter from "./routes/product.routes.js"
-import categoryRouter from "./routes/categories.routes.js"
-import userRouter from "./routes/users.routes.js"
-import orderRouter from "./routes/orders.routes.js"
-import variantRouter from "./routes/product-variants.routes.js"
+import categoryRouter from "./routes/category.routes.js"
+import userRouter from "./routes/user.routes.js"
+import orderRouter from "./routes/order.routes.js"
+import variantRouter from "./routes/product-variant.routes.js"
 
 const app = express();
 app.use(express.json()); 
+app.use(cors())
 
 app.use("/api/products", productRouter);
 app.use("/api/categories", categoryRouter);

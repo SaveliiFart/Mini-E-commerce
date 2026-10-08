@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { validateBody } from "../middleware/validate.middleware.js";
-import { createVariant, deleteVariant, getVariant, getVariants, updateVariant } from "../controllers/product-variants.controller.js";
+import { createVariant, deleteVariant, getVariant, getVariants, updateVariant } from "../controllers/product-variant.controller.js";
 import { createVariantSchema, updateVariantSchema } from "../schemas/product-variant.schema.js";
 
 

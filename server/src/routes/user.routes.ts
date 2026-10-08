@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { validateBody } from "../middleware/validate.middleware.js";
 import { findOrCreateUserSchema, updateUserSchema } from "../schemas/user.schema.js";
-import { findOrCreateUser, getUser, getUserByTelegramId, getUsers, updateUser } from "../controllers/users.controller.js";
+import { findOrCreateUser, getUser, getUserByTelegramId, getUsers, updateUser } from "../controllers/user.controller.js";
 
 const router = Router();
 
