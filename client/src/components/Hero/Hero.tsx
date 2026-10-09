@@ -1,6 +1,6 @@
 export const Hero = () => {
     return (
-        <section className="relative overflow-hidden bg-neutral-950">
+        <section className="relative overflow-hidden">
             <div
                 aria-hidden
                 className="pointer-events-none absolute top-[-40%] right-[-10%] size-115 rounded-full bg-linear-to-r from-[#ff3e8e] to-[#ff7a3d] opacity-18 blur-[120px]"

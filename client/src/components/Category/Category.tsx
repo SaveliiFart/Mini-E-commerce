@@ -1,6 +1,6 @@
 export const Category = () => {
     return (
-        <div className="bg-neutral-950 px-4 py-4">
+        <div className="mx-auto max-w-6xl px-4 py-4">
             <p className="text-white text-2xl font-bold mb-4">Категорії</p>
             <div className="grid grid-cols-2 md:grid-cols-4 text-white gap-6">
                 <div className="

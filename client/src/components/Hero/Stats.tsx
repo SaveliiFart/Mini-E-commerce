@@ -1,6 +1,6 @@
 export const Stats = () => {
     return(
-        <div className="grid grid-cols-2 bg-neutral-950 text-white md:grid-cols-4">
+        <div className="grid grid-cols-2 text-white md:grid-cols-4">
             <div className="border border-l-0 border-[#262626] w-full h-40 flex flex-col items-center justify-center ">
                 <p className="font-bold text-xl py-6">8000+</p>
                 <p className="text-sm text-white opacity-60">задоволених клієнтів</p>
